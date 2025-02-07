@@ -1,0 +1,49 @@
+graph TB
+    subgraph "User Interface"
+        UI[Tab-based Interface]
+        WS[WebSocket Updates]
+    end
+
+    subgraph "Core Services"
+        REG[Appgent Registry]
+        EVT[Event Bus]
+        AUTH[Auth Service]
+        AI[AI Orchestrator]
+    end
+
+    subgraph "Appgents"
+        PM[PhotoMemory]
+        CW[CourtWatch]
+        SP[ScheduleParser]
+        OI[OuraInsights]
+        DL[DailyLogger]
+    end
+
+    subgraph "External Services"
+        GP[Google Photos]
+        PT[Playtomic]
+        OR[Oura Ring]
+        GC[Google Calendar]
+    end
+
+    subgraph "Intelligence Layer"
+        KB[Knowledge Base]
+        ML[ML Models]
+        INF[Inference Engine]
+    end
+
+    UI --> REG
+    UI --> WS
+    WS --> EVT
+    REG --> EVT
+    EVT --> PM & CW & SP & OI & DL
+    PM --> GP
+    CW --> PT
+    OI --> OR
+    SP --> GC
+
+    PM & CW & SP & OI & DL --> KB
+    KB --> INF
+    INF --> ML
+    INF --> AI
+    AI --> EVT
