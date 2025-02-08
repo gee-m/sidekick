@@ -44,6 +44,58 @@ appgents/
     └── e2e/
 ```
 
+```
+.
+├── Dockerfile
+├── Dockerfile.dev
+├── Makefile
+├── README.md
+├── architecture.mermaid
+├── cmd
+│   └── server
+│       ├── main.go
+│       └── routes.go
+├── docker-compose.yml
+├── docs
+│   └── tech-choices.md
+├── go.mod
+├── go.sum
+├── internal
+│   ├── core
+│   │   ├── auth
+│   │   │   ├── handler.go
+│   │   │   ├── service.go
+│   │   │   └── session.go
+│   │   └── dashboard
+│   │       └── handler.go
+│   └── platform
+│       └── database
+│           ├── database.go
+│           └── migrate.go
+├── main
+├── migrations
+│   ├── 000001_init.down.sql
+│   ├── 000001_init.up.sql
+│   ├── 000002_add_sessions.down.sql
+│   └── 000002_add_sessions.up.sql
+├── tmp
+│   ├── build-errors.log
+│   └── main
+└── web
+    └── templates
+        ├── auth
+        │   ├── login.templ
+        │   └── login_templ.go
+        ├── dashboard
+        │   ├── dashboard.templ
+        │   └── dashboard_templ.go
+        └── layout
+            ├── base.templ
+            └── base_templ.go
+
+17 directories, 30 files
+```
+
 ## Implementation Checklist
 
 ### When Adding a New Feature
