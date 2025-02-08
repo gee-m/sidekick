@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"regexp"
+	"strings"
 
 	"github.com/a-h/templ"
 	"github.com/gee-m/sidekick/web/templates/auth"
@@ -34,7 +35,8 @@ func (h *Handler) Routes() chi.Router {
 	r.Post("/login", h.handleLogin)
 	r.Post("/check-email", h.CheckEmail)
 	r.Post("/signup", h.handleSignup)
-	r.Post("/logout", h.handleLogout) // Add logout route
+	r.Post("/logout", h.handleLogout)             // Add logout route
+	r.Get("/auth/verify/{token}", h.handleVerify) // Add verify route
 
 	return r
 }
@@ -172,8 +174,12 @@ func (h *Handler) handleSignup(w http.ResponseWriter, r *http.Request) {
 		MaxAge:   h.getSessionMaxAge(rememberMe),
 	})
 
-	// Redirect to dashboard
-	w.Header().Set("HX-Redirect", "/dashboard")
+	if !strings.HasSuffix(email, "@merindol.co") {
+		http.Redirect(w, r, "/auth/login?pending_verification=true", http.StatusSeeOther)
+		return
+	}
+
+	http.Redirect(w, r, "/auth/login?signup_success=true", http.StatusSeeOther)
 }
 
 func (h *Handler) handleLogout(w http.ResponseWriter, r *http.Request) {
@@ -194,4 +200,14 @@ func (h *Handler) handleLogout(w http.ResponseWriter, r *http.Request) {
 
 	// Redirect to login page
 	http.Redirect(w, r, "/auth/login", http.StatusSeeOther)
+}
+
+func (h *Handler) handleVerify(w http.ResponseWriter, r *http.Request) {
+	token := chi.URLParam(r, "token")
+	if err := h.service.VerifyEmail(r.Context(), token); err != nil {
+		http.Error(w, "Invalid or expired verification link", http.StatusBadRequest)
+		return
+	}
+
+	http.Redirect(w, r, "/auth/login?verified=true", http.StatusSeeOther)
 }
