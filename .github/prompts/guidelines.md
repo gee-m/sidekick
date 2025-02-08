@@ -8,6 +8,10 @@
 >
 > For LLMs: Please explicitly walk through the checklist items and explain your reasoning for each decision when proposing changes.
 
+When developing Aimia, strict adherence to domain-driven design principles is non-negotiable. Every feature must begin with thorough domain modeling through interfaces, with all dependencies explicitly injected and abstracted. The codebase must maintain a clear separation of concerns through a rigorously organized directory structure, where domain logic, infrastructure concerns, and presentation layers are distinctly separated. All components must be defined first through their interfaces before implementation, enabling easy testing and future modifications. HTMX interactions must be handled through clean, server-side templates with clear component boundaries, and all state changes must be propagated through a well-defined event system. The application must use Go's strong type system to enforce business rules at compile time, and all error handling must be explicit and domain-aware. Every package must have a clear, single responsibility, and cross-cutting concerns must be handled through middleware and interceptors. Data access must be abstracted through repository interfaces, with all database operations isolated from business logic. All HTTP handlers must be thin adapters that delegate to domain services, and WebSocket communication must be handled through a dedicated event bus. This architecture is not optional - it's a requirement for maintaining scalability and preventing technical debt in the Aimia platform.
+
+- Don't do import like `github.com/yourusername/appgents`, use `appgents` instead.
+
 ## Directory Structure
 
 ```
@@ -17,29 +21,30 @@ appgents/
 │       ├── main.go
 │       ├── main_test.go
 │       └── routes.go
-├── migrations/            # Database migrations
-│   ├── 000001_init.up.sql
-│   └── migrate.go
 ├── internal/              # Internal packages
 │   ├── core/             # Core services
-│   │   ├── auth/        # Authentication
-│   │   ├── bus/         # Event system
-│   │   ├── registry/    # Appgent registry
-│   │   └── theme/       # Theme management
-│   ├── appgents/        # Individual appgents
+│   │   ├── auth/         # Authentication
+│   │   ├── bus/          # Event system
+│   │   ├── registry/     # Appgent registry
+│   │   └── theme/        # Theme management
+│   ├── appgents/         # Individual appgents
 │   │   ├── playtomic/
 │   │   ├── schedule/
 │   │   ├── dailylog/
 │   │   └── oura/
-│   ├── platform/        # Infrastructure
+│   ├── platform/         # Infrastructure
 │   │   ├── database/
+│   │   │   ├── migrations/  # Database migrations
+│   │   │   │   ├── files/  # SQL migration files
+│   │   │   │   └── migrate.go
+│   │   │   └── database.go
 │   │   ├── http/
 │   │   └── notification/
-│   └── presentation/    # UI components
-├── web/                 # Web assets
-│   ├── templates/       # HTML templates
-│   └── static/         # Static assets
-└── tests/              # Integration and E2E tests only
+│   └── presentation/     # UI components
+├── web/                  # Web assets
+│   ├── templates/        # HTML templates
+│   └── static/          # Static assets
+└── tests/               # Integration and E2E tests only
     ├── integration/
     └── e2e/
 ```
@@ -802,6 +807,46 @@ func (a *Appgent) storeUserData(ctx context.Context, data interface{}) error {
     return a.repo.Store(ctx, filtered)
 }
 ```
+
+## UI Organization
+
+```
+web/
+├── templates/           # All template files
+│   ├── layout/         # Base layouts and shared structures
+│   │   └── base.templ  # Base HTML template
+│   ├── components/     # Reusable UI components
+│   │   ├── forms/
+│   │   └── nav/
+│   └── auth/           # Auth-specific templates
+│       └── login.templ
+└── static/             # Static assets
+    ├── css/           # Custom CSS files
+    ├── js/            # Custom JavaScript files
+    └── images/        # Image assets
+```
+
+### Template Guidelines
+
+1. Use Tailwind CSS for styling
+   - Prefer utility classes over custom CSS
+   - Use consistent color schemes and spacing
+   - Follow responsive design patterns
+
+2. Template Organization
+   - Keep templates close to their handlers
+   - Use composition over inheritance
+   - Break down complex templates into components
+
+3. HTMX Usage
+   - Use for dynamic updates
+   - Follow progressive enhancement
+   - Keep endpoints focused and simple
+
+4. JavaScript
+   - Minimize custom JS
+   - Use HTMX where possible
+   - Keep complex interactions isolated
 
 Remember:
 1. Always check actual implementation files

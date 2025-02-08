@@ -1,0 +1,22 @@
+{
+    "server": {
+        "port": "8080",
+        "read_timeout": 15,
+        "write_timeout": 15
+    },
+    "database": {
+        "host": "postgres",
+        "port": "5432",
+        "user": "appgents",
+        "password": "appgents",
+        "dbname": "appgents",
+        "sslmode": "disable"
+    },
+    "environment": "development",
+    "email": {
+        "mailjet": {
+            "apiKey": "",
+            "apiSecret": ""
+        }
+    }
+}

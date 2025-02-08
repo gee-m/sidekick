@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+    postgres:
+        image: postgres:16-alpine
+        environment:
+            POSTGRES_USER: appgents
+            POSTGRES_PASSWORD: appgents
+            POSTGRES_DB: appgents
+        ports:
+            - "5432:5432"
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+
+    server:
+        build:
+            context: .
+            dockerfile: Dockerfile.dev
+        volumes:
+            - .:/app
+            - ./config.json:/app/config.json:ro
+        ports:
+            - "8080:8080"
+        depends_on:
+            - postgres
+
+volumes:
+    postgres_data:
