@@ -43,11 +43,12 @@ func main() {
 	}
 	defer db.Close()
 
-	// Initialize auth service
+	// Initialize services and handlers
 	authService := auth.NewService(db)
+	sessions := auth.NewSessionManager(db)
 
-	// Setup routes
-	router := setupRoutes(authService)
+	// Setup routes with auth middleware
+	router := setupRoutes(authService, sessions)
 
 	// Create server
 	srv := &http.Server{
