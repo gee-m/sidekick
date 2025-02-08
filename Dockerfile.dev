@@ -1,0 +1,13 @@
+FROM golang:1.23-alpine
+
+WORKDIR /go/src/sidekick
+
+RUN go install github.com/air-verse/air@latest && \
+    go install github.com/a-h/templ/cmd/templ@latest
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+
+CMD ["air", "-c", ".air.toml"]

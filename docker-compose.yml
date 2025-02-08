@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile.dev
+        ports:
+            - "3000:3000"
+        volumes:
+            - .:/go/src/sidekick
+            - go-modules:/go/pkg/mod
+        environment:
+            - DB_HOST=postgres
+            - DB_PORT=5432
+            - DB_USER=sidekick
+            - DB_PASSWORD=sidekick
+            - DB_NAME=sidekick
+            - ENV=development
+        depends_on:
+            - postgres
+
+    postgres:
+        image: postgres:15-alpine
+        ports:
+            - "5432:5432"
+        environment:
+            - POSTGRES_USER=sidekick
+            - POSTGRES_PASSWORD=sidekick
+            - POSTGRES_DB=sidekick
+        volumes:
+            - postgres-data:/var/lib/postgresql/data
+
+volumes:
+    postgres-data:
+    go-modules:
