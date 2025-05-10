@@ -143,16 +143,16 @@ func (h *Handler) handleSignup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Create user
-	hashedPassword, err := HashPassword(password)
-	if err != nil {
+	// Use the service's SignUp method
+	if err := h.service.SignUp(r.Context(), email, password); err != nil {
 		auth.ErrorMessage("Error creating account").Render(r.Context(), w)
 		return
 	}
 
-	user, err := h.service.CreateUser(r.Context(), email, hashedPassword)
+	// Since SignUp doesn't return the user, we need to log them in
+	user, err := h.service.Login(r.Context(), email, password)
 	if err != nil {
-		auth.ErrorMessage("Error creating account").Render(r.Context(), w)
+		auth.ErrorMessage("Account created but could not log in").Render(r.Context(), w)
 		return
 	}
 

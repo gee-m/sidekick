@@ -168,7 +168,7 @@ func (s *Service) SignUp(ctx context.Context, email, password string) error {
         INSERT INTO users (email, password_hash, verification_token)
         VALUES ($1, $2, $3)
     `
-	if _, err := s.db.Exec(ctx, query, email, hashedPassword, verificationToken); err != nil {
+	if _, err := s.db.Exec(ctx, query, email, hashedPassword, verificationToken.String()); err != nil {
 		return fmt.Errorf("creating user: %w", err)
 	}
 
